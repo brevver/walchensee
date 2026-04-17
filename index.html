@@ -8,6 +8,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Karla:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 
+  <!-- Google Analytics 4 mit Consent Mode v2 -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { 'analytics_storage': 'denied' });
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NVBHKN96D7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-NVBHKN96D7', { anonymize_ip: true });
+    function enableAnalytics() {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  </script>
+
   <style>
     :root {
       --bg:        #060c17;
@@ -467,10 +484,106 @@
       .verdict-label  { font-size: 28px; }
       .analyse-grid   { grid-template-columns: 1fr; }
     }
+    /* ── Cookie-Banner ── */
+    #cookie-banner {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(6, 12, 23, 0.97);
+      border-top: 1px solid rgba(255,255,255,0.12);
+      padding: 16px 20px;
+      z-index: 9999;
+      backdrop-filter: blur(8px);
+    }
+    .cookie-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cookie-text {
+      flex: 1;
+      min-width: 240px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .cookie-text a { color: var(--accent); text-decoration: none; }
+    .cookie-btns { display: flex; gap: 8px; flex-shrink: 0; }
+    .cookie-btn-reject {
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 7px;
+      cursor: pointer;
+      font-family: 'Karla', sans-serif;
+      font-size: 13px;
+      transition: all 0.18s;
+    }
+    .cookie-btn-reject:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+    .cookie-btn-accept {
+      padding: 8px 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      font-family: 'Karla', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.18s;
+    }
+    .cookie-btn-accept:hover { background: #5a96ff; }
   </style>
 </head>
 
 <body>
+
+<!-- Cookie-Banner -->
+<div id="cookie-banner">
+  <div class="cookie-inner">
+    <p class="cookie-text">
+      Diese Website verwendet <strong style="color:var(--text)">Google Analytics 4</strong> zur anonymisierten Reichweitenmessung (IP-Anonymisierung aktiv).
+      Mehr dazu im <a href="#impressum-datenschutz" onclick="openImpressum()">Impressum & Datenschutz</a>.
+    </p>
+    <div class="cookie-btns">
+      <button class="cookie-btn-reject" onclick="rejectCookies()">Ablehnen</button>
+      <button class="cookie-btn-accept" onclick="acceptCookies()">Akzeptieren</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    var consent = localStorage.getItem('wa_cookie_consent');
+    if (consent === 'accepted') {
+      enableAnalytics();
+    } else if (!consent) {
+      document.getElementById('cookie-banner').style.display = 'block';
+    }
+  })();
+  function acceptCookies() {
+    localStorage.setItem('wa_cookie_consent', 'accepted');
+    document.getElementById('cookie-banner').style.display = 'none';
+    enableAnalytics();
+  }
+  function rejectCookies() {
+    localStorage.setItem('wa_cookie_consent', 'rejected');
+    document.getElementById('cookie-banner').style.display = 'none';
+  }
+  function resetCookieConsent() {
+    localStorage.removeItem('wa_cookie_consent');
+    location.reload();
+  }
+  function openImpressum() {
+    var el = document.getElementById('impressum-details');
+    if (el) { el.open = true; el.scrollIntoView({ behavior: 'smooth' }); }
+  }
+</script>
 <div class="container">
 
   <!-- Header -->
@@ -523,10 +636,10 @@
       </div>
     </details>
 
-    <details>
+    <details id="impressum-details">
       <summary>⚖️ Impressum & Datenschutz</summary>
       <div class="inner">
-        <div class="disclaimer">
+        <div class="disclaimer" id="impressum-datenschutz">
           <strong>Impressum</strong><br>
           Diese Website ist ein privates, nicht-kommerzielles Hobby-Projekt und richtet sich ausschließlich an den Betreiber sowie dessen engsten Freundes- und Bekanntenkreis. Es besteht keinerlei kommerzielle Absicht. Es werden keine Waren oder Dienstleistungen angeboten, keine Werbung geschaltet und keine Einnahmen erzielt.<br><br>
 
@@ -534,7 +647,10 @@
           Nutzung auf eigene Gefahr. Keine Gewähr für die Richtigkeit, Vollständigkeit oder Aktualität der angezeigten Wetterdaten. Die Vorhersagen ersetzen keine professionelle Wetterberatung.<br><br>
 
           <strong>Datenschutz</strong><br>
-          Diese Website speichert keine personenbezogenen Daten und verwendet keine Cookies. Durch das Laden der eingebetteten Webcam werden Daten an addicted-sports.com übertragen. Wetterdaten via <a href="https://open-meteo.com" target="_blank">Open-Meteo.com</a> (Open Source, CC BY 4.0).
+          Diese Website verwendet <strong>Google Analytics 4</strong>, einen Webanalysedienst der Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA – jedoch nur nach ausdrücklicher Einwilligung (Opt-in, Consent Mode v2). IP-Anonymisierung ist aktiviert; deine IP-Adresse wird vor Übertragung in der EU gekürzt.<br><br>
+          Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO. Du kannst deine Einwilligung jederzeit widerrufen:<br><br>
+          <button onclick="resetCookieConsent()" style="padding:6px 14px; font-size:12px; cursor:pointer; border:1px solid rgba(255,255,255,0.2); border-radius:6px; background:transparent; color:var(--muted); font-family:'Karla',sans-serif;">🍪 Cookie-Einstellungen zurücksetzen</button><br><br>
+          Durch das Laden der eingebetteten Webcam werden Daten an addicted-sports.com übertragen. Wetterdaten via <a href="https://open-meteo.com" target="_blank" style="color:var(--accent)">Open-Meteo.com</a> (Open Source, CC BY 4.0). Datenschutzerklärung Google: <a href="https://policies.google.com/privacy" target="_blank" style="color:var(--accent)">policies.google.com/privacy</a>
         </div>
       </div>
     </details>
