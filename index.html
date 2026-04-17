@@ -622,64 +622,109 @@ function processResponse(json) {
 }
 
 // ─────────────────────────────────────────────
-// SCORING ALGORITHM V5
+// SCORING ALGORITHM V6
+// Änderungen vs V5:
+//  - Negativer Delta → Gegendruck-Malus
+//  - Föhn graduiert: soft (BOZ–INN 4–6) → −70%, hard (>6) → 0
+//  - Windrichtung: weiche Kurve um 20° statt harte Schwellen
+//  - Wind-Stärke (km/h) als Verstärker/Malus
 // ─────────────────────────────────────────────
 function calcScore(r) {
-  let score = 0;
-  const { press_muc = 0, press_inn = 0, press_boz = 0,
-          cloud_wal = 100, temp_wal = 0, dir_wal = 0 } = r;
-  const delta = press_muc - press_inn;
+  const { press_muc, press_inn, press_boz,
+          cloud_wal, temp_wal, dir_wal, wind_wal } = r;
 
-  // 1. Delta
+  if (press_muc == null || press_inn == null || press_boz == null) return 0;
+
+  const delta     = press_muc - press_inn;
+  const boz_delta = press_boz - press_inn;
+  let score = 0;
+  let softFoehn = false;
+
+  // Föhn-Check (graduiert)
+  if (boz_delta > 6.0) return 0;          // harter Föhnsturm
+  if (boz_delta > 4.0) softFoehn = true;  // weicher Föhn → am Ende gedämpft
+
+  // 1. Druckgradient Delta
   if      (delta > 3.0) score += 60;
   else if (delta > 2.0) score += 50;
   else if (delta > 1.3) score += 30;
   else if (delta > 0.5) score += 10;
+  else if (delta < 0)   score += Math.trunc(delta * 8); // Gegendruck-Malus
 
-  // 2. Sonne
-  if      (cloud_wal < 40) score += 30;
-  else if (cloud_wal < 75) score += 15;
-  else if (delta > 3.0)    score += 15; // Wolken-egal-Modus
+  // 2. Sonne / Bewölkung
+  if      (cloud_wal != null && cloud_wal < 40) score += 30;
+  else if (cloud_wal != null && cloud_wal < 75) score += 15;
+  else if (delta > 3.0)                          score += 15; // Wolken-egal-Modus
 
   // 3. Temperatur
-  if (temp_wal < 2) score -= 20;
+  if (temp_wal != null && temp_wal < 2) score -= 20;
 
-  // 4. Wind
-  if (dir_wal > 100 && dir_wal < 260 && delta < 2.5) score -= 20;
-  if (dir_wal > 0   && dir_wal < 90)                 score += 10;
+  // 4. Windrichtung (weiche Gewichtung, optimal ~20° NNO)
+  if (dir_wal != null) {
+    const diff = Math.min(Math.abs(dir_wal - 20), 360 - Math.abs(dir_wal - 20));
+    if      (diff <= 40)                   score += 10;
+    else if (diff <= 80)                   score +=  5;
+    else if (diff <= 130 && delta < 2.5)   score -= 10;
+    else if (diff >  130 && delta < 2.5)   score -= 20;
+  }
 
-  // 5. Föhn
-  if ((press_boz - press_inn) > 4.0) return 0;
+  // 5. Wind-Stärke (Open-Meteo km/h → kn als Verstärker/Malus)
+  if (wind_wal != null) {
+    const kn = wind_wal / 1.852;
+    if      (kn >= 15) score += 20;
+    else if (kn >= 12) score += 15;
+    else if (kn >=  9) score +=  5;
+    else if (kn <   7) score -= 10;
+  }
+
+  // Soft-Föhn-Dämpfung
+  if (softFoehn) score = Math.trunc(score * 0.3);
 
   return Math.max(0, Math.min(100, score));
 }
 
 // ─────────────────────────────────────────────
-// EXPLANATION
+// EXPLANATION (V6)
 // ─────────────────────────────────────────────
 function getExplanation(r) {
-  const { press_muc = 0, press_inn = 0, press_boz = 0,
-          cloud_wal = 100, temp_wal = 0, dir_wal = 0 } = r;
-  const delta = press_muc - press_inn;
-  const reasons = [];
+  const { press_muc, press_inn, press_boz,
+          cloud_wal, temp_wal, dir_wal, wind_wal } = r;
+  const delta     = (press_muc ?? 0) - (press_inn ?? 0);
+  const boz_delta = (press_boz ?? 0) - (press_inn ?? 0);
+  const reasons   = [];
 
-  if ((press_boz - press_inn) > 4.0) return '☠️ FÖHN-ALARM → Score 0';
+  if (boz_delta > 6.0) return '☠️ HARTER FÖHN → Score 0';
+  if (boz_delta > 4.0) reasons.push('⚠️ Soft-Föhn (Score −70%)');
 
   if      (delta > 3.0) reasons.push('🌪️ Extrem-Druck (+60)');
   else if (delta > 2.0) reasons.push('💨 Starker Druck (+50)');
   else if (delta > 1.3) reasons.push('🌬️ Guter Druck (+30)');
   else if (delta > 0.5) reasons.push('🍃 Basis-Druck (+10)');
+  else if (delta < 0)   reasons.push(`🔄 Gegendruck (${Math.trunc(delta * 8)} Pkt.)`);
   else                  reasons.push('🚫 Kein Druck');
 
-  if      (cloud_wal < 40) reasons.push('☀️ Sonnig (+30)');
-  else if (cloud_wal < 75) reasons.push('⛅ Wolkig (+15)');
-  else if (delta > 3.0)    reasons.push('☁️ Wolken-egal (+15)');
-  else                     reasons.push('☁️ Zu bewölkt');
+  if      (cloud_wal != null && cloud_wal < 40) reasons.push('☀️ Sonnig (+30)');
+  else if (cloud_wal != null && cloud_wal < 75) reasons.push('⛅ Wolkig (+15)');
+  else if (delta > 3.0)                          reasons.push('☁️ Wolken-egal (+15)');
+  else                                           reasons.push('☁️ Zu bewölkt');
 
-  if (dir_wal > 0 && dir_wal < 90)                        reasons.push('🧭 N/O-Bonus (+10)');
-  else if (dir_wal > 100 && dir_wal < 260 && delta < 2.5) reasons.push('⚠️ S/W-Abzug (-20)');
+  if (dir_wal != null) {
+    const diff = Math.min(Math.abs(dir_wal - 20), 360 - Math.abs(dir_wal - 20));
+    if      (diff <= 40)                   reasons.push('🧭 Idealrichtung N/NO (+10)');
+    else if (diff <= 80)                   reasons.push('🧭 Gute Richtung (+5)');
+    else if (diff <= 130 && delta < 2.5)   reasons.push('⚠️ Schräge Richtung (−10)');
+    else if (diff >  130 && delta < 2.5)   reasons.push('⚠️ Gegenrichtung (−20)');
+  }
 
-  if (temp_wal < 2) reasons.push('❄️ Zu kalt (-20)');
+  if (temp_wal != null && temp_wal < 2) reasons.push('❄️ Zu kalt (−20)');
+
+  if (wind_wal != null) {
+    const kn = wind_wal / 1.852;
+    if      (kn >= 15) reasons.push(`💪 Starker Wind ${kn.toFixed(0)} kn (+20)`);
+    else if (kn >= 12) reasons.push(`✅ Guter Wind ${kn.toFixed(0)} kn (+15)`);
+    else if (kn >=  9) reasons.push(`🌀 Wind ${kn.toFixed(0)} kn (+5)`);
+    else if (kn <   7) reasons.push(`🪁 Flaute ${kn.toFixed(0)} kn (−10)`);
+  }
 
   return reasons.join(' · ');
 }
