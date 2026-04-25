@@ -8,23 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Karla:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 
-  <!-- Google Analytics 4 mit Consent Mode v2 -->
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('consent', 'default', { 'analytics_storage': 'denied' });
-  </script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NVBHKN96D7"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-NVBHKN96D7', { anonymize_ip: true });
-    function enableAnalytics() {
-      gtag('consent', 'update', { 'analytics_storage': 'granted' });
-    }
-  </script>
-
   <style>
     :root {
       --bg:        #060c17;
@@ -484,106 +467,10 @@
       .verdict-label  { font-size: 28px; }
       .analyse-grid   { grid-template-columns: 1fr; }
     }
-    /* ── Cookie-Banner ── */
-    #cookie-banner {
-      display: none;
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: rgba(6, 12, 23, 0.97);
-      border-top: 1px solid rgba(255,255,255,0.12);
-      padding: 16px 20px;
-      z-index: 9999;
-      backdrop-filter: blur(8px);
-    }
-    .cookie-inner {
-      max-width: 720px;
-      margin: 0 auto;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .cookie-text {
-      flex: 1;
-      min-width: 240px;
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-    .cookie-text a { color: var(--accent); text-decoration: none; }
-    .cookie-btns { display: flex; gap: 8px; flex-shrink: 0; }
-    .cookie-btn-reject {
-      padding: 8px 16px;
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 7px;
-      cursor: pointer;
-      font-family: 'Karla', sans-serif;
-      font-size: 13px;
-      transition: all 0.18s;
-    }
-    .cookie-btn-reject:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
-    .cookie-btn-accept {
-      padding: 8px 16px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 7px;
-      cursor: pointer;
-      font-family: 'Karla', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      transition: all 0.18s;
-    }
-    .cookie-btn-accept:hover { background: #5a96ff; }
   </style>
 </head>
 
 <body>
-
-<!-- Cookie-Banner -->
-<div id="cookie-banner">
-  <div class="cookie-inner">
-    <p class="cookie-text">
-      Diese Website verwendet <strong style="color:var(--text)">Google Analytics 4</strong> zur anonymisierten Reichweitenmessung (IP-Anonymisierung aktiv).
-      Mehr dazu im <a href="#impressum-datenschutz" onclick="openImpressum()">Impressum & Datenschutz</a>.
-    </p>
-    <div class="cookie-btns">
-      <button class="cookie-btn-reject" onclick="rejectCookies()">Ablehnen</button>
-      <button class="cookie-btn-accept" onclick="acceptCookies()">Akzeptieren</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  (function() {
-    var consent = localStorage.getItem('wa_cookie_consent');
-    if (consent === 'accepted') {
-      enableAnalytics();
-    } else if (!consent) {
-      document.getElementById('cookie-banner').style.display = 'block';
-    }
-  })();
-  function acceptCookies() {
-    localStorage.setItem('wa_cookie_consent', 'accepted');
-    document.getElementById('cookie-banner').style.display = 'none';
-    enableAnalytics();
-  }
-  function rejectCookies() {
-    localStorage.setItem('wa_cookie_consent', 'rejected');
-    document.getElementById('cookie-banner').style.display = 'none';
-  }
-  function resetCookieConsent() {
-    localStorage.removeItem('wa_cookie_consent');
-    location.reload();
-  }
-  function openImpressum() {
-    var el = document.getElementById('impressum-details');
-    if (el) { el.open = true; el.scrollIntoView({ behavior: 'smooth' }); }
-  }
-</script>
 <div class="container">
 
   <!-- Header -->
@@ -636,10 +523,10 @@
       </div>
     </details>
 
-    <details id="impressum-details">
+    <details>
       <summary>⚖️ Impressum & Datenschutz</summary>
       <div class="inner">
-        <div class="disclaimer" id="impressum-datenschutz">
+        <div class="disclaimer">
           <strong>Impressum</strong><br>
           Diese Website ist ein privates, nicht-kommerzielles Hobby-Projekt und richtet sich ausschließlich an den Betreiber sowie dessen engsten Freundes- und Bekanntenkreis. Es besteht keinerlei kommerzielle Absicht. Es werden keine Waren oder Dienstleistungen angeboten, keine Werbung geschaltet und keine Einnahmen erzielt.<br><br>
 
@@ -647,10 +534,7 @@
           Nutzung auf eigene Gefahr. Keine Gewähr für die Richtigkeit, Vollständigkeit oder Aktualität der angezeigten Wetterdaten. Die Vorhersagen ersetzen keine professionelle Wetterberatung.<br><br>
 
           <strong>Datenschutz</strong><br>
-          Diese Website verwendet <strong>Google Analytics 4</strong>, einen Webanalysedienst der Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA – jedoch nur nach ausdrücklicher Einwilligung (Opt-in, Consent Mode v2). IP-Anonymisierung ist aktiviert; deine IP-Adresse wird vor Übertragung in der EU gekürzt.<br><br>
-          Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO. Du kannst deine Einwilligung jederzeit widerrufen:<br><br>
-          <button onclick="resetCookieConsent()" style="padding:6px 14px; font-size:12px; cursor:pointer; border:1px solid rgba(255,255,255,0.2); border-radius:6px; background:transparent; color:var(--muted); font-family:'Karla',sans-serif;">🍪 Cookie-Einstellungen zurücksetzen</button><br><br>
-          Durch das Laden der eingebetteten Webcam werden Daten an addicted-sports.com übertragen. Wetterdaten via <a href="https://open-meteo.com" target="_blank" style="color:var(--accent)">Open-Meteo.com</a> (Open Source, CC BY 4.0). Datenschutzerklärung Google: <a href="https://policies.google.com/privacy" target="_blank" style="color:var(--accent)">policies.google.com/privacy</a>
+          Diese Website speichert keine personenbezogenen Daten und verwendet keine Cookies. Durch das Laden der eingebetteten Webcam werden Daten an addicted-sports.com übertragen. Wetterdaten via <a href="https://open-meteo.com" target="_blank">Open-Meteo.com</a> (Open Source, CC BY 4.0).
         </div>
       </div>
     </details>
@@ -684,6 +568,7 @@ async function fetchOne(baseUrl, key, options = {}) {
     timezone:  'Europe/Berlin',
   });
   if (options.forecast_days) params.set('forecast_days', options.forecast_days);
+  if (options.past_days)     params.set('past_days',     options.past_days);
   if (options.start_date)    params.set('start_date',    options.start_date);
   if (options.end_date)      params.set('end_date',      options.end_date);
 
@@ -738,109 +623,64 @@ function processResponse(json) {
 }
 
 // ─────────────────────────────────────────────
-// SCORING ALGORITHM V6
-// Änderungen vs V5:
-//  - Negativer Delta → Gegendruck-Malus
-//  - Föhn graduiert: soft (BOZ–INN 4–6) → −70%, hard (>6) → 0
-//  - Windrichtung: weiche Kurve um 20° statt harte Schwellen
-//  - Wind-Stärke (km/h) als Verstärker/Malus
+// SCORING ALGORITHM V5
 // ─────────────────────────────────────────────
 function calcScore(r) {
-  const { press_muc, press_inn, press_boz,
-          cloud_wal, temp_wal, dir_wal, wind_wal } = r;
-
-  if (press_muc == null || press_inn == null || press_boz == null) return 0;
-
-  const delta     = press_muc - press_inn;
-  const boz_delta = press_boz - press_inn;
   let score = 0;
-  let softFoehn = false;
+  const { press_muc = 0, press_inn = 0, press_boz = 0,
+          cloud_wal = 100, temp_wal = 0, dir_wal = 0 } = r;
+  const delta = press_muc - press_inn;
 
-  // Föhn-Check (graduiert)
-  if (boz_delta > 6.0) return 0;          // harter Föhnsturm
-  if (boz_delta > 4.0) softFoehn = true;  // weicher Föhn → am Ende gedämpft
-
-  // 1. Druckgradient Delta
+  // 1. Delta
   if      (delta > 3.0) score += 60;
   else if (delta > 2.0) score += 50;
   else if (delta > 1.3) score += 30;
   else if (delta > 0.5) score += 10;
-  else if (delta < 0)   score += Math.trunc(delta * 8); // Gegendruck-Malus
 
-  // 2. Sonne / Bewölkung
-  if      (cloud_wal != null && cloud_wal < 40) score += 30;
-  else if (cloud_wal != null && cloud_wal < 75) score += 15;
-  else if (delta > 3.0)                          score += 15; // Wolken-egal-Modus
+  // 2. Sonne
+  if      (cloud_wal < 40) score += 30;
+  else if (cloud_wal < 75) score += 15;
+  else if (delta > 3.0)    score += 15; // Wolken-egal-Modus
 
   // 3. Temperatur
-  if (temp_wal != null && temp_wal < 2) score -= 20;
+  if (temp_wal < 2) score -= 20;
 
-  // 4. Windrichtung (weiche Gewichtung, optimal ~20° NNO)
-  if (dir_wal != null) {
-    const diff = Math.min(Math.abs(dir_wal - 20), 360 - Math.abs(dir_wal - 20));
-    if      (diff <= 40)                   score += 10;
-    else if (diff <= 80)                   score +=  5;
-    else if (diff <= 130 && delta < 2.5)   score -= 10;
-    else if (diff >  130 && delta < 2.5)   score -= 20;
-  }
+  // 4. Wind
+  if (dir_wal > 100 && dir_wal < 260 && delta < 2.5) score -= 20;
+  if (dir_wal > 0   && dir_wal < 90)                 score += 10;
 
-  // 5. Wind-Stärke (Open-Meteo km/h → kn als Verstärker/Malus)
-  if (wind_wal != null) {
-    const kn = wind_wal / 1.852;
-    if      (kn >= 15) score += 20;
-    else if (kn >= 12) score += 15;
-    else if (kn >=  9) score +=  5;
-    else if (kn <   7) score -= 10;
-  }
-
-  // Soft-Föhn-Dämpfung
-  if (softFoehn) score = Math.trunc(score * 0.3);
+  // 5. Föhn
+  if ((press_boz - press_inn) > 4.0) return 0;
 
   return Math.max(0, Math.min(100, score));
 }
 
 // ─────────────────────────────────────────────
-// EXPLANATION (V6)
+// EXPLANATION
 // ─────────────────────────────────────────────
 function getExplanation(r) {
-  const { press_muc, press_inn, press_boz,
-          cloud_wal, temp_wal, dir_wal, wind_wal } = r;
-  const delta     = (press_muc ?? 0) - (press_inn ?? 0);
-  const boz_delta = (press_boz ?? 0) - (press_inn ?? 0);
-  const reasons   = [];
+  const { press_muc = 0, press_inn = 0, press_boz = 0,
+          cloud_wal = 100, temp_wal = 0, dir_wal = 0 } = r;
+  const delta = press_muc - press_inn;
+  const reasons = [];
 
-  if (boz_delta > 6.0) return '☠️ HARTER FÖHN → Score 0';
-  if (boz_delta > 4.0) reasons.push('⚠️ Soft-Föhn (Score −70%)');
+  if ((press_boz - press_inn) > 4.0) return '☠️ FÖHN-ALARM → Score 0';
 
   if      (delta > 3.0) reasons.push('🌪️ Extrem-Druck (+60)');
   else if (delta > 2.0) reasons.push('💨 Starker Druck (+50)');
   else if (delta > 1.3) reasons.push('🌬️ Guter Druck (+30)');
   else if (delta > 0.5) reasons.push('🍃 Basis-Druck (+10)');
-  else if (delta < 0)   reasons.push(`🔄 Gegendruck (${Math.trunc(delta * 8)} Pkt.)`);
   else                  reasons.push('🚫 Kein Druck');
 
-  if      (cloud_wal != null && cloud_wal < 40) reasons.push('☀️ Sonnig (+30)');
-  else if (cloud_wal != null && cloud_wal < 75) reasons.push('⛅ Wolkig (+15)');
-  else if (delta > 3.0)                          reasons.push('☁️ Wolken-egal (+15)');
-  else                                           reasons.push('☁️ Zu bewölkt');
+  if      (cloud_wal < 40) reasons.push('☀️ Sonnig (+30)');
+  else if (cloud_wal < 75) reasons.push('⛅ Wolkig (+15)');
+  else if (delta > 3.0)    reasons.push('☁️ Wolken-egal (+15)');
+  else                     reasons.push('☁️ Zu bewölkt');
 
-  if (dir_wal != null) {
-    const diff = Math.min(Math.abs(dir_wal - 20), 360 - Math.abs(dir_wal - 20));
-    if      (diff <= 40)                   reasons.push('🧭 Idealrichtung N/NO (+10)');
-    else if (diff <= 80)                   reasons.push('🧭 Gute Richtung (+5)');
-    else if (diff <= 130 && delta < 2.5)   reasons.push('⚠️ Schräge Richtung (−10)');
-    else if (diff >  130 && delta < 2.5)   reasons.push('⚠️ Gegenrichtung (−20)');
-  }
+  if (dir_wal > 0 && dir_wal < 90)                        reasons.push('🧭 N/O-Bonus (+10)');
+  else if (dir_wal > 100 && dir_wal < 260 && delta < 2.5) reasons.push('⚠️ S/W-Abzug (-20)');
 
-  if (temp_wal != null && temp_wal < 2) reasons.push('❄️ Zu kalt (−20)');
-
-  if (wind_wal != null) {
-    const kn = wind_wal / 1.852;
-    if      (kn >= 15) reasons.push(`💪 Starker Wind ${kn.toFixed(0)} kn (+20)`);
-    else if (kn >= 12) reasons.push(`✅ Guter Wind ${kn.toFixed(0)} kn (+15)`);
-    else if (kn >=  9) reasons.push(`🌀 Wind ${kn.toFixed(0)} kn (+5)`);
-    else if (kn <   7) reasons.push(`🪁 Flaute ${kn.toFixed(0)} kn (−10)`);
-  }
+  if (temp_wal < 2) reasons.push('❄️ Zu kalt (-20)');
 
   return reasons.join(' · ');
 }
@@ -1016,7 +856,7 @@ function switchTab(idx) {
 })();
 
 // ─────────────────────────────────────────────
-// HISTORY
+// HISTORY — Archiv (alt) + Forecast past_days (neu) kombinieren
 // ─────────────────────────────────────────────
 async function loadHistory() {
   const el = document.getElementById('stat-result');
@@ -1025,24 +865,57 @@ async function loadHistory() {
   content.innerHTML = '<div class="loading" style="padding:20px 0"><div class="loading-spinner"></div>Lade 180 Tage… (kann einen Moment dauern)</div>';
 
   try {
-    const today  = new Date();
-    const end    = new Date(today); end.setDate(end.getDate() - 1);
-    const start  = new Date(today); start.setDate(start.getDate() - 180);
+    const today = new Date();
+    const fmt   = d => d.toISOString().slice(0, 10);
 
-    const fmt = d => d.toISOString().slice(0, 10);
-    const json = await fetchWeather('https://archive-api.open-meteo.com/v1/archive', {
-      start_date: fmt(start), end_date: fmt(end)
+    // ── 1) Archiv-API: Tag -180 bis Tag -92 ──
+    // (Archiv hat ca. 3 Monate Verzögerung — deshalb nur ältere Daten)
+    const archiveEnd   = new Date(today); archiveEnd.setDate(archiveEnd.getDate() - 92);
+    const archiveStart = new Date(today); archiveStart.setDate(archiveStart.getDate() - 180);
+
+    // ── 2) Forecast-API mit past_days=92: letzte 3 Monate bis gestern ──
+    const recentJson  = await fetchWeather('https://api.open-meteo.com/v1/forecast', {
+      past_days: 92, forecast_days: 1
+    });
+    const recentRows  = processResponse(recentJson);
+
+    // Archiv parallel laden
+    let archiveRows = [];
+    try {
+      const archiveJson = await fetchWeather('https://archive-api.open-meteo.com/v1/archive', {
+        start_date: fmt(archiveStart), end_date: fmt(archiveEnd)
+      });
+      archiveRows = processResponse(archiveJson);
+    } catch (e) {
+      console.warn('Archiv-API nicht verfügbar:', e);
+    }
+
+    // Zusammenführen: Archiv + Recent (Duplikate per Timestamp entfernen)
+    const allRows = [...archiveRows, ...recentRows];
+    const seen    = new Set();
+    const unique  = [];
+    for (const r of allRows) {
+      const key = r.date.toISOString();
+      if (!seen.has(key)) { seen.add(key); unique.push(r); }
+    }
+
+    // Nur Tagesstunden + Score ≥ 70
+    const daytime = unique.filter(r => r.hour >= 11 && r.hour <= 17);
+    const goodDaysMap = new Map();
+    daytime.filter(r => r.score >= 70).forEach(r => {
+      const key = r.date.toLocaleDateString('de-DE');
+      // Speichere das tatsächliche Datum für Sortierung
+      if (!goodDaysMap.has(key)) goodDaysMap.set(key, r.date);
     });
 
-    const rows     = processResponse(json);
-    const daytime  = rows.filter(r => r.hour >= 11 && r.hour <= 17);
-    const goodDays = [...new Set(
-      daytime.filter(r => r.score >= 70)
-             .map(r => r.date.toLocaleDateString('de-DE'))
-    )].slice(0, 10);
+    // Neueste Tage zuerst, max 15
+    const goodDays = [...goodDaysMap.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 15)
+      .map(([label]) => label);
 
     if (!goodDays.length) {
-      content.innerHTML = '<span style="color:var(--muted)">❄️ Keine Tage mit Score > 70 in den letzten 180 Tagen.</span>';
+      content.innerHTML = '<span style="color:var(--muted)">❄️ Keine Tage mit Score ≥ 70 in den letzten 180 Tagen.</span>';
       return;
     }
 
